@@ -4,11 +4,8 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 const galleryContainer = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
 
-// Ініціалізація SimpleLightbox
-const lightbox = new SimpleLightbox('.gallery a', {
-  captionsData: 'alt',
-  captionDelay: 250,
-});
+// Оголошуємо змінну для лінзи, але не ініціалізуємо її одразу на порожньому DOM
+let lightbox = null;
 
 export function createGallery(images) {
   const markup = images
@@ -30,7 +27,17 @@ export function createGallery(images) {
     .join('');
 
   galleryContainer.insertAdjacentHTML('beforeend', markup);
-  lightbox.refresh();
+
+  // Ініціалізуємо лише тоді, коли з'явилися перші елементи
+  if (!lightbox) {
+    lightbox = new SimpleLightbox('.gallery a', {
+      captionsData: 'alt',
+      captionDelay: 250,
+    });
+  } else {
+    // Якщо вже ініціалізовано — просто оновлюємо
+    lightbox.refresh();
+  }
 }
 
 export function clearGallery() {
@@ -38,9 +45,9 @@ export function clearGallery() {
 }
 
 export function showLoader() {
-  loader.classList.remove('is-hidden');
+  if (loader) loader.classList.remove('is-hidden');
 }
 
 export function hideLoader() {
-  loader.classList.add('is-hidden');
+  if (loader) loader.classList.add('is-hidden');
 }
